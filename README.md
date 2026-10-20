@@ -2,13 +2,25 @@
 
 Landing de prueba para una tienda ficticia de diseño y lifestyle. Es **una sola sección de Shopify** (Liquid + CSS + JS, sin dependencias) con todo configurable desde el editor de temas, más una vista previa local para probarla sin tocar ninguna tienda.
 
+El repo es un **tema completo**: [Dawn v16.0.0](https://github.com/Shopify/dawn) (tema oficial de Shopify, licencia en `LICENSE-DAWN.md`) más los archivos de Luma. Así se puede conectar desde GitHub.
+
 ```
 luma-store/
 ├── sections/luma-landing-page.liquid   ← LA SECCIÓN (HTML + CSS + JS + schema)
-├── layout/luma.liquid                  ← layout opcional sin header/footer del tema
+├── layout/luma.liquid                  ← layout sin header/footer del tema
 ├── templates/page.luma.json            ← plantilla de página que usa la sección
-└── preview/                            ← solo para la vista previa local (no se sube)
+├── assets/ config/ layout/theme.liquid locales/ sections/ snippets/ templates/  ← Dawn
+└── preview/                            ← solo para la vista previa local (Shopify lo ignora)
 ```
+
+## 0. Conectar desde GitHub (la vía de este repo)
+
+1. **Tienda online → Temas → Agregar tema → Conectar desde GitHub** → cuenta, repositorio y rama `main` → **Conectar**.
+2. Aparece en *Temas en borrador*. Cada `git push` a `main` actualiza el tema, y lo que cambies en el editor de temas se guarda como commit en el repo (haz `git pull` antes de seguir trabajando en local).
+3. **Páginas → Agregar página**, título «Luma», plantilla del tema `luma`, y guarda.
+4. En el tema conectado: **Personalizar** → selector de páginas → *Páginas → luma*. Elige la colección en «Productos destacados».
+
+Si prefieres pegar la sección en un tema que ya tienes, sigue la sección 1.
 
 ## 1. Dónde va cada archivo en Shopify
 
