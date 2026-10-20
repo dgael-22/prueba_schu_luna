@@ -1,75 +1,186 @@
 {
+  "layout": "luma",
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
+    "main": {
+      "type": "luma-landing-page",
       "blocks": {
-        "heading": {
-          "type": "heading",
+        "nav_link_1": {
+          "type": "nav_link",
           "settings": {
-            "heading": "Browse our latest products",
-            "heading_size": "h0"
+            "title": "Inicio",
+            "anchor": "none"
           }
         },
-        "button": {
-          "type": "buttons",
+        "nav_link_2": {
+          "type": "nav_link",
           "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "title": "Nuevos lanzamientos",
+            "anchor": "productos"
+          }
+        },
+        "nav_link_3": {
+          "type": "nav_link",
+          "settings": {
+            "title": "Colecciones",
+            "anchor": "categorias"
+          }
+        },
+        "nav_link_4": {
+          "type": "nav_link",
+          "settings": {
+            "title": "Nosotros",
+            "anchor": "historia"
+          }
+        },
+        "nav_link_5": {
+          "type": "nav_link",
+          "settings": {
+            "title": "Contacto",
+            "anchor": "contacto"
+          }
+        },
+        "category_1": {
+          "type": "category",
+          "settings": {
+            "title": "Hogar",
+            "text": "Cerámica, textiles y luz cálida para habitar con calma."
+          }
+        },
+        "category_2": {
+          "type": "category",
+          "settings": {
+            "title": "Accesorios",
+            "text": "Piezas ligeras y nobles que viajan contigo."
+          }
+        },
+        "category_3": {
+          "type": "category",
+          "settings": {
+            "title": "Oficina",
+            "text": "Escritorios ordenados, ideas más claras."
+          }
+        },
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "truck",
+            "title": "Envíos rápidos",
+            "text": "Entrega en 24–72 h a todo el país."
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "lock",
+            "title": "Pagos seguros",
+            "text": "Tarjeta, transferencia y meses sin intereses."
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "return",
+            "title": "Cambios fáciles",
+            "text": "30 días para cambiar de opinión."
+          }
+        },
+        "benefit_4": {
+          "type": "benefit",
+          "settings": {
+            "icon": "chat",
+            "title": "Atención personalizada",
+            "text": "Te asesoramos por chat o correo."
+          }
+        },
+        "testimonial_1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "El florero llegó perfectamente empacado y es todavía más bonito en persona. Se nota el cuidado en cada detalle.",
+            "title": "Mariana López",
+            "city": "Ciudad de México",
+            "rating": 5
+          }
+        },
+        "testimonial_2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Compré la lámpara para mi escritorio y cambió por completo mi espacio de trabajo. Envío rapidísimo.",
+            "title": "Andrés Ruiz",
+            "city": "Guadalajara",
+            "rating": 5
+          }
+        },
+        "testimonial_3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Tuve que cambiar una talla y fue facilísimo. La atención es cálida y muy rápida. Ya es mi tienda de regalos.",
+            "title": "Sofía Hernández",
+            "city": "Monterrey",
+            "rating": 5
+          }
+        },
+        "footer_link_1": {
+          "type": "footer_link",
+          "settings": {
+            "title": "Ayuda",
+            "page": "contact"
+          }
+        },
+        "footer_link_2": {
+          "type": "footer_link",
+          "settings": {
+            "title": "Envíos",
+            "page": "shipping"
+          }
+        },
+        "footer_link_3": {
+          "type": "footer_link",
+          "settings": {
+            "title": "Devoluciones",
+            "page": "refund"
+          }
+        },
+        "footer_link_4": {
+          "type": "footer_link",
+          "settings": {
+            "title": "Aviso de privacidad",
+            "page": "privacy"
+          }
+        },
+        "footer_link_5": {
+          "type": "footer_link",
+          "settings": {
+            "title": "Términos y condiciones",
+            "page": "terms"
           }
         }
       },
       "block_order": [
-        "heading",
-        "button"
+        "nav_link_1",
+        "nav_link_2",
+        "nav_link_3",
+        "nav_link_4",
+        "nav_link_5",
+        "category_1",
+        "category_2",
+        "category_3",
+        "benefit_1",
+        "benefit_2",
+        "benefit_3",
+        "benefit_4",
+        "testimonial_1",
+        "testimonial_2",
+        "testimonial_3",
+        "footer_link_1",
+        "footer_link_2",
+        "footer_link_3",
+        "footer_link_4",
+        "footer_link_5"
       ],
-      "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
-        "image_behavior": "none",
-        "desktop_content_alignment": "center",
-        "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
-        "stack_images_on_mobile": false,
-        "show_text_below": false
-      }
-    },
-    "featured_collection": {
-      "type": "featured-collection",
-      "settings": {
-        "title": "Featured products",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "collection": "all",
-        "products_to_show": 8,
-        "columns_desktop": 4,
-        "color_scheme": "scheme-1",
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
-        "enable_desktop_slider": false,
-        "swipe_on_mobile": false,
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "padding_top": 44,
-        "padding_bottom": 36
-      }
+      "settings": {}
     }
   },
   "order": [
-    "image_banner",
-    "featured_collection"
+    "main"
   ]
 }
