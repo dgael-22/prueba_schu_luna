@@ -1,0 +1,15 @@
+{
+  "name": "luma-store",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Landing page de prueba para Shopify (Luma Store) con vista previa local.",
+  "type": "module",
+  "scripts": {
+    "dev": "node preview/server.mjs",
+    "template": "node preview/build-template.mjs",
+    "check": "shopify theme check --path ."
+  },
+  "devDependencies": {
+    "liquidjs": "^10.21.0"
+  }
+}

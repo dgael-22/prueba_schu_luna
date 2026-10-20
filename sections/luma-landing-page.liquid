@@ -1,0 +1,2701 @@
+{%- comment -%}
+  Luma Store · Landing page
+  Sección autocontenida: anuncio, header, hero, categorías, productos, bloque
+  editorial, beneficios, testimonios, newsletter y footer.
+  CSS en {% stylesheet %} y JS en {% javascript %} (al final del archivo);
+  los colores configurables se inyectan con {% style %}.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign sid = section.id
+
+  assign brand = s.brand_name | default: shop.name
+
+  if routes.root_url == '/'
+    assign root_path = '/'
+  else
+    assign root_path = routes.root_url | append: '/'
+  endif
+
+  assign main_tag = 'div'
+  if s.show_header
+    assign main_tag = 'main'
+  endif
+
+  assign fc = s.featured_collection
+  assign category_blocks = section.blocks | where: 'type', 'category'
+  assign benefit_blocks = section.blocks | where: 'type', 'benefit'
+  assign testimonial_blocks = section.blocks | where: 'type', 'testimonial'
+  assign nav_blocks = section.blocks | where: 'type', 'nav_link'
+  assign footer_blocks = section.blocks | where: 'type', 'footer_link'
+
+  assign anchor_categories = 'luma-categorias-' | append: sid
+  assign anchor_products = 'luma-productos-' | append: sid
+  assign anchor_story = 'luma-historia-' | append: sid
+  assign anchor_benefits = 'luma-beneficios-' | append: sid
+  assign anchor_testimonials = 'luma-testimonios-' | append: sid
+  assign anchor_newsletter = 'luma-newsletter-' | append: sid
+  assign anchor_footer = 'luma-contacto-' | append: sid
+  assign main_id = 'luma-main-' | append: sid
+-%}
+
+{%- capture icon_menu -%}<svg class="luma-icon luma-icon--menu" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>{%- endcapture -%}
+{%- capture icon_close -%}<svg class="luma-icon luma-icon--close" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>{%- endcapture -%}
+{%- capture icon_search -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>{%- endcapture -%}
+{%- capture icon_account -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4.1-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></svg>{%- endcapture -%}
+{%- capture icon_cart -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>{%- endcapture -%}
+{%- capture icon_heart -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10.2A4.1 4.1 0 0 1 12 7.4a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20Z"/></svg>{%- endcapture -%}
+{%- capture icon_arrow -%}<svg class="luma-icon luma-icon--arrow" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{%- endcapture -%}
+{%- capture icon_truck -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2.5 5.5h11v10h-11z"/><path d="M13.5 9h4l3 3.2v3.3h-7"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>{%- endcapture -%}
+{%- capture icon_lock -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5M12 14.5V17"/></svg>{%- endcapture -%}
+{%- capture icon_return -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11a5 5 0 0 1 0 10H8"/><path d="M8 5 4 9l4 4"/></svg>{%- endcapture -%}
+{%- capture icon_chat -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 5.5h16v10H9.5L5 19.5v-4H4z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01" stroke-width="2.2" stroke-linecap="round"/></svg>{%- endcapture -%}
+{%- capture icon_leaf -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 19c0-8 5-13.5 14-14 0 9-5 14-13 14"/><path d="m5 19 7-7"/></svg>{%- endcapture -%}
+{%- capture icon_gift -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 10h16v10H4zM3 7h18v3H3zM12 7v13"/><path d="M12 7c-1.5-3-5-3.5-5-1.2C7 7 9 7 12 7Zm0 0c1.5-3 5-3.5 5-1.2C17 7 15 7 12 7Z"/></svg>{%- endcapture -%}
+{%- capture icon_check -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>{%- endcapture -%}
+{%- capture icon_alert -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5.5M12 16.4v.1"/></svg>{%- endcapture -%}
+{%- capture icon_star -%}<svg class="luma-star" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8z"/></svg>{%- endcapture -%}
+{%- capture icon_quote -%}<svg class="luma-quote-mark" aria-hidden="true" focusable="false" viewBox="0 0 32 24"><path d="M0 24V14C0 6.3 4.3 1.6 12 0l1.4 3.4C9 5 6.8 7.6 6.5 11.5H12V24zm19 0V14c0-7.7 4.3-12.4 12-14l1 3.4c-4.4 1.6-6.6 4.2-6.9 8.1H31V24z"/></svg>{%- endcapture -%}
+{%- capture icon_instagram -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>{%- endcapture -%}
+{%- capture icon_facebook -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.6-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.9v3h2.6V21h3Z"/></svg>{%- endcapture -%}
+{%- capture icon_tiktok -%}<svg class="luma-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3h-3.1v12.2a2.7 2.7 0 1 1-2.7-2.7c.3 0 .5 0 .8.1V9.4a5.9 5.9 0 1 0 5 5.8V9.1a7.6 7.6 0 0 0 4.4 1.4V7.4a4.4 4.4 0 0 1-4.4-4.4Z"/></svg>{%- endcapture -%}
+
+{%- style -%}
+  #luma-{{ sid }} {
+    --luma-bg: {{ s.color_background | default: '#F7F6F2' }};
+    --luma-surface: {{ s.color_surface | default: '#FFFFFF' }};
+    --luma-text: {{ s.color_text | default: '#1F2933' }};
+    --luma-accent: {{ s.color_accent | default: '#C96B4B' }};
+    --luma-olive: {{ s.color_olive | default: '#6D7657' }};
+    --luma-announcement-bg: {{ s.announcement_bg | default: '#1F2933' }};
+    --luma-announcement-text: {{ s.announcement_text_color | default: '#F7F6F2' }};
+    --luma-newsletter-bg: {{ s.newsletter_bg | default: '#6D7657' }};
+    --luma-newsletter-text: {{ s.newsletter_text_color | default: '#FFFFFF' }};
+    --luma-footer-bg: {{ s.footer_bg | default: '#1F2933' }};
+    --luma-footer-text: {{ s.footer_text_color | default: '#F7F6F2' }};
+    --luma-hero-overlay: {{ s.hero_overlay | divided_by: 100.0 }};
+    --luma-logo-width: {{ s.logo_width }}px;
+  }
+{%- endstyle -%}
+
+<luma-landing
+  id="luma-{{ sid }}"
+  class="luma luma--heading-{{ s.heading_font }}{% if s.sticky_header %} luma--sticky{% endif %}"
+  data-section-id="{{ sid }}"
+  {% if s.enable_reveal and request.design_mode == false %}data-luma-animate{% endif %}
+>
+  {%- if s.show_header -%}
+    <a class="luma-skip-link" href="#{{ main_id }}">Saltar al contenido</a>
+  {%- endif -%}
+
+  {%- comment -%} 1. Barra de anuncio {%- endcomment -%}
+  {%- if s.show_announcement and s.announcement_text != blank -%}
+    <div class="luma-announcement" role="region" aria-label="Anuncio" data-luma-inert>
+      <div class="luma-container">
+        {%- if s.announcement_link != blank -%}
+          <a class="luma-announcement__text" href="{{ s.announcement_link }}">{{ s.announcement_text | escape }}</a>
+        {%- else -%}
+          <p class="luma-announcement__text">{{ s.announcement_text | escape }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} 2. Header {%- endcomment -%}
+  {%- if s.show_header -%}
+    <header class="luma-header" data-luma-header>
+      <div class="luma-container luma-header__inner">
+        <button
+          type="button"
+          class="luma-icon-btn luma-header__toggle"
+          aria-expanded="false"
+          aria-controls="luma-nav-{{ sid }}"
+          data-luma-menu-toggle
+        >
+          <span class="luma-visually-hidden" data-luma-menu-label>Abrir menú</span>
+          {{- icon_menu -}}
+          {{- icon_close -}}
+        </button>
+
+        <a class="luma-header__logo" href="{{ routes.root_url }}">
+          {%- if s.logo != blank -%}
+            {%- assign logo_height = s.logo_width | divided_by: s.logo.aspect_ratio | round -%}
+            {{
+              s.logo
+              | image_url: width: 600
+              | image_tag:
+                alt: brand,
+                width: s.logo_width,
+                height: logo_height,
+                widths: '150, 300, 450, 600',
+                sizes: '(min-width: 990px) 260px, 180px',
+                class: 'luma-header__logo-img',
+                loading: 'eager'
+            }}
+          {%- else -%}
+            <span class="luma-wordmark">{{ brand | escape }}</span>
+          {%- endif -%}
+        </a>
+
+        <nav id="luma-nav-{{ sid }}" class="luma-nav" aria-label="Principal" data-luma-menu>
+          <ul class="luma-nav__list" role="list">
+            {%- if s.header_menu != blank -%}
+              {%- for link in s.header_menu.links -%}
+                <li>
+                  <a
+                    class="luma-nav__link"
+                    href="{{ link.url }}"
+                    {% if link.current %}aria-current="page"{% endif %}
+                  >
+                    {{- link.title | escape -}}
+                  </a>
+                </li>
+              {%- endfor -%}
+            {%- else -%}
+              {%- for block in nav_blocks -%}
+                {%- liquid
+                  assign href = block.settings.link
+                  if href == blank
+                    case block.settings.anchor
+                      when 'categorias'
+                        assign href = '#' | append: anchor_categories
+                      when 'productos'
+                        assign href = '#' | append: anchor_products
+                      when 'historia'
+                        assign href = '#' | append: anchor_story
+                      when 'beneficios'
+                        assign href = '#' | append: anchor_benefits
+                      when 'testimonios'
+                        assign href = '#' | append: anchor_testimonials
+                      when 'newsletter'
+                        assign href = '#' | append: anchor_newsletter
+                      when 'contacto'
+                        assign href = '#' | append: anchor_footer
+                      else
+                        assign href = routes.root_url
+                    endcase
+                  endif
+                -%}
+                <li {{ block.shopify_attributes }}>
+                  <a class="luma-nav__link" href="{{ href }}">{{ block.settings.title | escape }}</a>
+                </li>
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+          <div class="luma-nav__extra">
+            <a href="{{ routes.search_url }}">{{ icon_search }}<span>Buscar</span></a>
+            {%- if shop.customer_accounts_enabled -%}
+              <a href="{{ routes.account_url }}">{{ icon_account }}<span>Mi cuenta</span></a>
+            {%- endif -%}
+          </div>
+        </nav>
+
+        <div class="luma-header__actions">
+          <a class="luma-icon-btn luma-header__search" href="{{ routes.search_url }}" aria-label="Buscar">
+            {{- icon_search -}}
+          </a>
+          {%- if shop.customer_accounts_enabled -%}
+            <a class="luma-icon-btn luma-header__account" href="{{ routes.account_url }}" aria-label="Mi cuenta">
+              {{- icon_account -}}
+            </a>
+          {%- endif -%}
+          <a
+            class="luma-icon-btn luma-header__cart"
+            href="{{ routes.cart_url }}"
+            aria-label="Carrito, {{ cart.item_count }} {% if cart.item_count == 1 %}artículo{% else %}artículos{% endif %}"
+            data-luma-cart-link
+          >
+            {{- icon_cart -}}
+            <span class="luma-cart-count" aria-hidden="true" data-luma-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>
+              {{- cart.item_count -}}
+            </span>
+          </a>
+        </div>
+      </div>
+      <div class="luma-nav-backdrop" data-luma-backdrop></div>
+    </header>
+  {%- endif -%}
+
+  <{{ main_tag }} id="{{ main_id }}" class="luma-main" tabindex="-1" data-luma-inert>
+    {%- comment -%} 3. Hero {%- endcomment -%}
+    {%- liquid
+      assign hero_primary_href = s.hero_primary_link
+      if hero_primary_href == blank
+        assign hero_primary_href = '#' | append: anchor_products
+      endif
+      assign hero_secondary_href = s.hero_secondary_link
+      if hero_secondary_href == blank
+        if fc != blank
+          assign hero_secondary_href = fc.url
+        else
+          assign hero_secondary_href = routes.all_products_collection_url
+        endif
+      endif
+    -%}
+    <section class="luma-hero luma-hero--{{ s.hero_layout }}" aria-labelledby="luma-hero-title-{{ sid }}">
+      <div class="luma-container luma-hero__grid">
+        <div class="luma-hero__content">
+          {%- if s.hero_badge != blank -%}
+            <p class="luma-badge"><span class="luma-badge__dot" aria-hidden="true"></span>{{ s.hero_badge | escape }}</p>
+          {%- endif -%}
+          <h1 id="luma-hero-title-{{ sid }}" class="luma-heading luma-hero__title">{{ s.hero_title }}</h1>
+          {%- if s.hero_text != blank -%}
+            <p class="luma-hero__text">{{ s.hero_text }}</p>
+          {%- endif -%}
+          <div class="luma-hero__actions">
+            {%- if s.hero_primary_label != blank -%}
+              <a class="luma-btn luma-btn--primary" href="{{ hero_primary_href }}">
+                {{- s.hero_primary_label | escape -}}
+                {{- icon_arrow -}}
+              </a>
+            {%- endif -%}
+            {%- if s.hero_secondary_label != blank -%}
+              <a class="luma-btn luma-btn--secondary" href="{{ hero_secondary_href }}">{{ s.hero_secondary_label | escape }}</a>
+            {%- endif -%}
+          </div>
+          {%- if s.hero_note != blank -%}
+            <p class="luma-hero__note">{{ icon_truck }}<span>{{ s.hero_note }}</span></p>
+          {%- endif -%}
+        </div>
+
+        <div class="luma-hero__media">
+          {%- if s.hero_image != blank -%}
+            {%- assign hero_alt = s.hero_image.alt | default: s.hero_title | strip_html -%}
+            {{
+              s.hero_image
+              | image_url: width: 2400
+              | image_tag:
+                alt: hero_alt,
+                widths: '600, 900, 1200, 1600, 2000, 2400',
+                sizes: '(min-width: 990px) 55vw, 100vw',
+                loading: 'eager',
+                fetchpriority: 'high',
+                class: 'luma-cover'
+            }}
+          {%- else -%}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'luma-cover luma-placeholder' }}
+          {%- endif -%}
+          {%- if s.hero_card_title != blank -%}
+            <div class="luma-hero__card">
+              {%- if s.hero_card_eyebrow != blank -%}
+                <p class="luma-hero__card-eyebrow">{{ s.hero_card_eyebrow | escape }}</p>
+              {%- endif -%}
+              <p class="luma-hero__card-title">{{ s.hero_card_title | escape }}</p>
+              {%- if s.hero_card_text != blank -%}
+                <p class="luma-hero__card-text">{{ s.hero_card_text | escape }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} 4. Categorías destacadas {%- endcomment -%}
+    {%- if category_blocks.size > 0 -%}
+      <section
+        id="{{ anchor_categories }}"
+        class="luma-section luma-categories"
+        aria-labelledby="{{ anchor_categories }}-title"
+      >
+        <div class="luma-container">
+          <div class="luma-section__header" data-luma-reveal>
+            <div>
+              {%- if s.categories_eyebrow != blank -%}
+                <p class="luma-eyebrow">{{ s.categories_eyebrow | escape }}</p>
+              {%- endif -%}
+              <h2 id="{{ anchor_categories }}-title" class="luma-heading luma-section__title">
+                {{- s.categories_heading -}}
+              </h2>
+            </div>
+          </div>
+          <ul class="luma-categories__grid" role="list" data-luma-reveal>
+            {%- for block in category_blocks -%}
+              {%- liquid
+                assign cat = block.settings.collection
+                assign cat_image = block.settings.image | default: cat.featured_image
+                assign cat_title = block.settings.title | default: cat.title
+                assign cat_url = block.settings.link | default: cat.url | default: routes.collections_url
+                assign placeholder_name = 'collection-' | append: forloop.index
+              -%}
+              <li class="luma-category" {{ block.shopify_attributes }}>
+                <div class="luma-category__media">
+                  {%- if cat_image != blank -%}
+                    {%- assign cat_alt = cat_image.alt | default: cat_title -%}
+                    {{
+                      cat_image
+                      | image_url: width: 1200
+                      | image_tag:
+                        alt: cat_alt,
+                        widths: '400, 600, 800, 1000, 1200',
+                        sizes: '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 80vw',
+                        loading: 'lazy',
+                        class: 'luma-cover'
+                    }}
+                  {%- else -%}
+                    {{ placeholder_name | placeholder_svg_tag: 'luma-cover luma-placeholder' }}
+                  {%- endif -%}
+                </div>
+                <div class="luma-category__body">
+                  <h3 class="luma-heading luma-category__title">
+                    <a class="luma-stretched-link" href="{{ cat_url }}">{{ cat_title | escape }}</a>
+                  </h3>
+                  {%- if block.settings.text != blank -%}
+                    <p class="luma-category__text">{{ block.settings.text | escape }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.cta != blank -%}
+                    <span class="luma-link-arrow" aria-hidden="true">{{ block.settings.cta | escape }}{{ icon_arrow }}</span>
+                  {%- endif -%}
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </section>
+    {%- endif -%}
+
+    {%- comment -%} 5. Productos destacados {%- endcomment -%}
+    <section id="{{ anchor_products }}" class="luma-section luma-products" aria-labelledby="{{ anchor_products }}-title">
+      <div class="luma-container">
+        <div class="luma-section__header" data-luma-reveal>
+          <div>
+            {%- if s.products_eyebrow != blank -%}
+              <p class="luma-eyebrow">{{ s.products_eyebrow | escape }}</p>
+            {%- endif -%}
+            <h2 id="{{ anchor_products }}-title" class="luma-heading luma-section__title">{{ s.products_heading }}</h2>
+          </div>
+          {%- if fc != blank and s.products_view_all != blank -%}
+            <a class="luma-link-arrow luma-link-arrow--underline" href="{{ fc.url }}">
+              {{- s.products_view_all | escape -}}
+              <span class="luma-visually-hidden"> de {{ fc.title | escape }}</span>
+              {{- icon_arrow -}}
+            </a>
+          {%- endif -%}
+        </div>
+
+        <ul class="luma-products__grid" role="list" data-luma-reveal>
+          {%- if fc != blank and fc.products_count > 0 -%}
+            {%- for product in fc.products limit: s.products_limit -%}
+              {%- liquid
+                assign variant = product.selected_or_first_available_variant
+                assign on_sale = false
+                assign discount = 0
+                if variant.compare_at_price > variant.price
+                  assign on_sale = true
+                  assign discount = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price | floor
+                endif
+                assign form_id = 'luma-form-' | append: sid | append: '-' | append: product.id
+                assign media_alt = product.featured_media.alt | default: product.title
+              -%}
+              <li class="luma-product" data-luma-product>
+                <div class="luma-product__media">
+                  <a class="luma-product__media-link" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+                    {%- if product.featured_media != blank -%}
+                      {{
+                        product.featured_media
+                        | image_url: width: 900
+                        | image_tag:
+                          alt: media_alt,
+                          widths: '300, 450, 600, 900',
+                          sizes: '(min-width: 990px) 25vw, 50vw',
+                          loading: 'lazy',
+                          class: 'luma-cover luma-product__img'
+                      }}
+                      {%- if s.show_second_image and product.media.size > 1 -%}
+                        {{
+                          product.media[1]
+                          | image_url: width: 900
+                          | image_tag:
+                            alt: '',
+                            widths: '300, 450, 600, 900',
+                            sizes: '(min-width: 990px) 25vw, 50vw',
+                            loading: 'lazy',
+                            class: 'luma-cover luma-product__img luma-product__img--secondary'
+                        }}
+                      {%- endif -%}
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag: 'luma-cover luma-placeholder' }}
+                    {%- endif -%}
+                  </a>
+
+                  {%- if product.available == false -%}
+                    <span class="luma-tag luma-tag--muted">Agotado</span>
+                  {%- else -%}
+                    <span class="luma-tag luma-tag--sale" data-luma-discount {% unless on_sale %}hidden{% endunless %}>
+                      -{{ discount }}%
+                    </span>
+                  {%- endif -%}
+
+                  <button
+                    type="button"
+                    class="luma-fav"
+                    aria-pressed="false"
+                    aria-label="Guardar {{ product.title | escape }} en favoritos"
+                    data-luma-fav
+                  >
+                    {{- icon_heart -}}
+                  </button>
+                </div>
+
+                <div class="luma-product__body">
+                  {%- if s.show_vendor and product.vendor != blank -%}
+                    <p class="luma-product__vendor">{{ product.vendor | escape }}</p>
+                  {%- endif -%}
+                  <h3 class="luma-product__title">
+                    <a href="{{ product.url }}">{{ product.title | escape }}</a>
+                  </h3>
+                  <p class="luma-price">
+                    <span class="luma-visually-hidden">Precio:</span>
+                    <span class="luma-price__current{% if on_sale %} luma-price__current--sale{% endif %}" data-luma-price>
+                      {{- variant.price | money -}}
+                    </span>
+                    <s class="luma-price__compare" data-luma-compare {% unless on_sale %}hidden{% endunless %}>
+                      <span class="luma-visually-hidden">Precio regular:</span>
+                      <span data-luma-compare-value>{{ variant.compare_at_price | money }}</span>
+                    </s>
+                  </p>
+
+                  {%- form 'product', product, id: form_id, class: 'luma-product__form', novalidate: 'novalidate', data-luma-cart-form: '' -%}
+                    {%- if product.has_only_default_variant -%}
+                      <input type="hidden" name="id" value="{{ variant.id }}">
+                    {%- else -%}
+                      {%- comment -%}
+                        Selector simple: una opción por variante. Para selectores por
+                        opción (color / talla) usa product.options_with_values.
+                      {%- endcomment -%}
+                      <label class="luma-visually-hidden" for="{{ form_id }}-variant">
+                        Opción de {{ product.title | escape }}
+                      </label>
+                      <div class="luma-select">
+                        <select id="{{ form_id }}-variant" class="luma-select__input" name="id" data-luma-variant>
+                          {%- for v in product.variants -%}
+                            {%- liquid
+                              assign v_compare = ''
+                              assign v_discount = ''
+                              if v.compare_at_price > v.price
+                                assign v_compare = v.compare_at_price | money
+                                assign v_discount = v.compare_at_price | minus: v.price | times: 100 | divided_by: v.compare_at_price | floor
+                              endif
+                            -%}
+                            <option
+                              value="{{ v.id }}"
+                              data-price="{{ v.price | money | escape }}"
+                              data-compare="{{ v_compare | escape }}"
+                              data-discount="{{ v_discount }}"
+                              {% if v.id == variant.id %}selected{% endif %}
+                              {% unless v.available %}disabled{% endunless %}
+                            >
+                              {{- v.title | escape -}}
+                              {%- unless v.available %} · Agotado{% endunless -%}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                      </div>
+                    {%- endif -%}
+                    <input type="hidden" name="quantity" value="1">
+                    <button
+                      type="submit"
+                      name="add"
+                      class="luma-btn luma-btn--primary luma-btn--block luma-add"
+                      data-luma-add
+                      {% unless product.available %}disabled{% endunless %}
+                    >
+                      <span class="luma-add__label" data-luma-add-label>
+                        {%- if product.available -%}Agregar al carrito{%- else -%}Agotado{%- endif -%}
+                      </span>
+                      <span class="luma-spinner" aria-hidden="true"></span>
+                    </button>
+                    <p class="luma-product__error" role="alert" data-luma-form-error hidden></p>
+                  {%- endform -%}
+                </div>
+              </li>
+            {%- endfor -%}
+          {%- else -%}
+            {%- comment -%} Sin colección: tarjetas de ejemplo para el editor de temas {%- endcomment -%}
+            {%- for i in (1..s.products_limit) -%}
+              {%- assign placeholder_name = 'product-' | append: i -%}
+              <li class="luma-product luma-product--placeholder">
+                <div class="luma-product__media">
+                  {{ placeholder_name | placeholder_svg_tag: 'luma-cover luma-placeholder' }}
+                </div>
+                <div class="luma-product__body">
+                  <h3 class="luma-product__title">Nombre del producto</h3>
+                  <p class="luma-price"><span class="luma-price__current">{{ 129900 | money }}</span></p>
+                  <button type="button" class="luma-btn luma-btn--primary luma-btn--block" disabled>Agregar al carrito</button>
+                </div>
+              </li>
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+        {%- if fc == blank -%}
+          <p class="luma-hint">Elige una colección en el editor de temas para mostrar productos reales.</p>
+        {%- endif -%}
+      </div>
+    </section>
+
+    {%- comment -%} 6. Bloque editorial {%- endcomment -%}
+    {%- assign story_href = s.editorial_button_link | default: routes.root_url -%}
+    <section
+      id="{{ anchor_story }}"
+      class="luma-section luma-editorial luma-editorial--image-{{ s.editorial_image_position }}"
+      aria-labelledby="{{ anchor_story }}-title"
+    >
+      <div class="luma-container luma-editorial__grid">
+        <div class="luma-editorial__media" data-luma-reveal>
+          {%- if s.editorial_image != blank -%}
+            {%- assign editorial_alt = s.editorial_image.alt | default: s.editorial_heading | strip_html -%}
+            {{
+              s.editorial_image
+              | image_url: width: 1800
+              | image_tag:
+                alt: editorial_alt,
+                widths: '600, 900, 1200, 1500, 1800',
+                sizes: '(min-width: 990px) 55vw, 100vw',
+                loading: 'lazy',
+                class: 'luma-cover'
+            }}
+          {%- else -%}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'luma-cover luma-placeholder' }}
+          {%- endif -%}
+        </div>
+        <div class="luma-editorial__content" data-luma-reveal>
+          {%- if s.editorial_eyebrow != blank -%}
+            <p class="luma-eyebrow">{{ s.editorial_eyebrow | escape }}</p>
+          {%- endif -%}
+          <h2 id="{{ anchor_story }}-title" class="luma-heading luma-section__title">{{ s.editorial_heading }}</h2>
+          {%- if s.editorial_text != blank -%}
+            <div class="luma-rte">{{ s.editorial_text }}</div>
+          {%- endif -%}
+          {%- if s.editorial_point_1 != blank or s.editorial_point_2 != blank or s.editorial_point_3 != blank -%}
+            <ul class="luma-editorial__points" role="list">
+              {%- if s.editorial_point_1 != blank -%}<li>{{ icon_check }}<span>{{ s.editorial_point_1 | escape }}</span></li>{%- endif -%}
+              {%- if s.editorial_point_2 != blank -%}<li>{{ icon_check }}<span>{{ s.editorial_point_2 | escape }}</span></li>{%- endif -%}
+              {%- if s.editorial_point_3 != blank -%}<li>{{ icon_check }}<span>{{ s.editorial_point_3 | escape }}</span></li>{%- endif -%}
+            </ul>
+          {%- endif -%}
+          {%- if s.editorial_button_label != blank -%}
+            <a class="luma-btn luma-btn--secondary" href="{{ story_href }}">
+              {{- s.editorial_button_label | escape -}}
+              {{- icon_arrow -}}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} 7. Beneficios {%- endcomment -%}
+    {%- if benefit_blocks.size > 0 -%}
+      <section id="{{ anchor_benefits }}" class="luma-benefits" aria-labelledby="{{ anchor_benefits }}-title">
+        <div class="luma-container">
+          <h2 id="{{ anchor_benefits }}-title" class="luma-visually-hidden">{{ s.benefits_heading | escape }}</h2>
+          <ul class="luma-benefits__grid" role="list" data-luma-reveal>
+            {%- for block in benefit_blocks -%}
+              <li class="luma-benefit" {{ block.shopify_attributes }}>
+                <span class="luma-benefit__icon">
+                  {%- case block.settings.icon -%}
+                    {%- when 'lock' -%}{{ icon_lock }}
+                    {%- when 'return' -%}{{ icon_return }}
+                    {%- when 'chat' -%}{{ icon_chat }}
+                    {%- when 'leaf' -%}{{ icon_leaf }}
+                    {%- when 'gift' -%}{{ icon_gift }}
+                    {%- else -%}{{ icon_truck }}
+                  {%- endcase -%}
+                </span>
+                <div>
+                  <h3 class="luma-benefit__title">{{ block.settings.title | escape }}</h3>
+                  {%- if block.settings.text != blank -%}
+                    <p class="luma-benefit__text">{{ block.settings.text | escape }}</p>
+                  {%- endif -%}
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </section>
+    {%- endif -%}
+
+    {%- comment -%} 8. Testimonios {%- endcomment -%}
+    {%- if testimonial_blocks.size > 0 -%}
+      <section
+        id="{{ anchor_testimonials }}"
+        class="luma-section luma-testimonials"
+        aria-labelledby="{{ anchor_testimonials }}-title"
+      >
+        <div class="luma-container">
+          <div class="luma-section__header luma-section__header--center" data-luma-reveal>
+            <div>
+              {%- if s.testimonials_eyebrow != blank -%}
+                <p class="luma-eyebrow">{{ s.testimonials_eyebrow | escape }}</p>
+              {%- endif -%}
+              <h2 id="{{ anchor_testimonials }}-title" class="luma-heading luma-section__title">
+                {{- s.testimonials_heading -}}
+              </h2>
+            </div>
+          </div>
+          <ul class="luma-testimonials__grid" role="list" data-luma-reveal>
+            {%- for block in testimonial_blocks -%}
+              <li class="luma-testimonial" {{ block.shopify_attributes }}>
+                <figure>
+                  <div class="luma-stars" role="img" aria-label="Calificación: {{ block.settings.rating }} de 5 estrellas">
+                    {%- for i in (1..5) -%}
+                      <span class="luma-stars__item{% if i > block.settings.rating %} is-empty{% endif %}">{{ icon_star }}</span>
+                    {%- endfor -%}
+                  </div>
+                  {{ icon_quote }}
+                  <blockquote class="luma-testimonial__quote">
+                    <p>{{ block.settings.quote | escape }}</p>
+                  </blockquote>
+                  <figcaption class="luma-testimonial__author">
+                    <span class="luma-testimonial__avatar" aria-hidden="true">{{ block.settings.title | slice: 0 }}</span>
+                    <span>
+                      <strong>{{ block.settings.title | escape }}</strong>
+                      {%- if block.settings.city != blank -%}
+                        <span class="luma-testimonial__city">{{ block.settings.city | escape }}</span>
+                      {%- endif -%}
+                    </span>
+                  </figcaption>
+                </figure>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </section>
+    {%- endif -%}
+
+    {%- comment -%} 9. Newsletter {%- endcomment -%}
+    {%- if s.show_newsletter -%}
+      {%- assign newsletter_id = 'luma-newsletter-form-' | append: sid -%}
+      <section id="{{ anchor_newsletter }}" class="luma-newsletter" aria-labelledby="{{ anchor_newsletter }}-title">
+        <div class="luma-container">
+          <div class="luma-newsletter__panel" data-luma-reveal>
+            <div class="luma-newsletter__intro">
+              <h2 id="{{ anchor_newsletter }}-title" class="luma-heading luma-newsletter__title">
+                {{- s.newsletter_heading -}}
+              </h2>
+              {%- if s.newsletter_text != blank -%}
+                <p class="luma-newsletter__text">{{ s.newsletter_text }}</p>
+              {%- endif -%}
+            </div>
+
+            {%- form 'customer', id: newsletter_id, class: 'luma-newsletter__form', novalidate: 'novalidate', data-luma-newsletter: '' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <div class="luma-newsletter__field">
+                <label class="luma-visually-hidden" for="{{ newsletter_id }}-email">Correo electrónico</label>
+                <input
+                  id="{{ newsletter_id }}-email"
+                  class="luma-input"
+                  type="email"
+                  name="contact[email]"
+                  value="{{ form.email }}"
+                  placeholder="{{ s.newsletter_placeholder | escape }}"
+                  autocomplete="email"
+                  autocapitalize="off"
+                  autocorrect="off"
+                  spellcheck="false"
+                  required
+                  aria-describedby="{{ newsletter_id }}-msg"
+                  {% if form.errors %}aria-invalid="true"{% endif %}
+                >
+                <button type="submit" class="luma-btn luma-btn--light" name="commit">
+                  {{- s.newsletter_button | escape -}}
+                </button>
+              </div>
+              <div id="{{ newsletter_id }}-msg" class="luma-form-msg-region" data-luma-newsletter-msg>
+                {%- if form.errors -%}
+                  <p class="luma-form-msg luma-form-msg--error" role="alert" tabindex="-1" data-luma-newsletter-result>
+                    {{ icon_alert }}
+                    <span>
+                      {%- for field in form.errors -%}
+                        {%- if field == 'form' -%}
+                          {{ form.errors.messages[field] }}
+                        {%- else -%}
+                          {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </span>
+                  </p>
+                {%- elsif form.posted_successfully? -%}
+                  <p class="luma-form-msg luma-form-msg--success" role="status" tabindex="-1" data-luma-newsletter-result>
+                    {{ icon_check }}<span>{{ s.newsletter_success | escape }}</span>
+                  </p>
+                {%- endif -%}
+              </div>
+              {%- if s.newsletter_note != blank -%}
+                <p class="luma-newsletter__note">{{ s.newsletter_note | escape }}</p>
+              {%- endif -%}
+            {%- endform -%}
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+  </{{ main_tag }}>
+
+  {%- comment -%} 10. Footer {%- endcomment -%}
+  {%- if s.show_footer -%}
+    {%- liquid
+      assign instagram = s.social_instagram | default: settings.social_instagram_link | default: 'https://www.instagram.com/'
+      assign facebook = s.social_facebook | default: settings.social_facebook_link | default: 'https://www.facebook.com/'
+      assign tiktok = s.social_tiktok | default: settings.social_tiktok_link | default: 'https://www.tiktok.com/'
+    -%}
+    <footer id="{{ anchor_footer }}" class="luma-footer" data-luma-inert>
+      <div class="luma-container luma-footer__grid">
+        <div class="luma-footer__brand">
+          {%- if s.footer_logo != blank -%}
+            {%- assign footer_logo_height = 140 | divided_by: s.footer_logo.aspect_ratio | round -%}
+            {{
+              s.footer_logo
+              | image_url: width: 400
+              | image_tag: alt: brand, width: 140, height: footer_logo_height, loading: 'lazy', class: 'luma-footer__logo'
+            }}
+          {%- else -%}
+            <p class="luma-wordmark luma-wordmark--footer">{{ brand | escape }}</p>
+          {%- endif -%}
+          {%- if s.footer_text != blank -%}
+            <p class="luma-footer__text">{{ s.footer_text | escape }}</p>
+          {%- endif -%}
+          <ul class="luma-social" role="list">
+            <li>
+              <a class="luma-social__link" href="{{ instagram }}" target="_blank" rel="noopener">
+                {{- icon_instagram -}}
+                <span class="luma-visually-hidden">Instagram (se abre en una pestaña nueva)</span>
+              </a>
+            </li>
+            <li>
+              <a class="luma-social__link" href="{{ facebook }}" target="_blank" rel="noopener">
+                {{- icon_facebook -}}
+                <span class="luma-visually-hidden">Facebook (se abre en una pestaña nueva)</span>
+              </a>
+            </li>
+            <li>
+              <a class="luma-social__link" href="{{ tiktok }}" target="_blank" rel="noopener">
+                {{- icon_tiktok -}}
+                <span class="luma-visually-hidden">TikTok (se abre en una pestaña nueva)</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <nav class="luma-footer__nav" aria-labelledby="luma-footer-nav-{{ sid }}">
+          <h2 id="luma-footer-nav-{{ sid }}" class="luma-footer__heading">{{ s.footer_links_heading | escape }}</h2>
+          <ul role="list">
+            {%- if s.footer_menu != blank -%}
+              {%- for link in s.footer_menu.links -%}
+                <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+              {%- endfor -%}
+            {%- else -%}
+              {%- for block in footer_blocks -%}
+                {%- liquid
+                  assign href = block.settings.link
+                  if href == blank
+                    case block.settings.page
+                      when 'contact'
+                        assign href = root_path | append: 'pages/contact'
+                      when 'shipping'
+                        assign href = shop.shipping_policy.url
+                      when 'refund'
+                        assign href = shop.refund_policy.url
+                      when 'privacy'
+                        assign href = shop.privacy_policy.url
+                      when 'terms'
+                        assign href = shop.terms_of_service.url
+                    endcase
+                  endif
+                  if href == blank
+                    assign href = routes.root_url
+                  endif
+                -%}
+                <li {{ block.shopify_attributes }}>
+                  <a href="{{ href }}">{{ block.settings.title | escape }}</a>
+                </li>
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        </nav>
+
+        {%- if s.footer_contact_heading != blank or s.footer_contact != blank -%}
+          <div class="luma-footer__contact">
+            <h2 class="luma-footer__heading">{{ s.footer_contact_heading | escape }}</h2>
+            <div class="luma-footer__contact-text">{{ s.footer_contact }}</div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="luma-container luma-footer__bottom">
+        <p>&copy; {{ 'now' | date: '%Y' }} {{ brand | escape }}. Todos los derechos reservados.</p>
+        {%- if s.footer_tagline != blank -%}
+          <p>{{ s.footer_tagline | escape }}</p>
+        {%- endif -%}
+      </div>
+    </footer>
+  {%- endif -%}
+
+  <p class="luma-visually-hidden" role="status" aria-live="polite" data-luma-status></p>
+</luma-landing>
+
+{% stylesheet %}
+  /* Unidades en px a propósito: muchos temas (p. ej. Dawn) cambian el tamaño de rem. */
+  luma-landing { display: block; }
+
+  .luma {
+    --luma-radius: 18px;
+    --luma-radius-sm: 12px;
+    --luma-radius-lg: 28px;
+    --luma-shadow: 0 1px 2px rgba(31, 41, 51, 0.04), 0 10px 30px -18px rgba(31, 41, 51, 0.18);
+    --luma-shadow-hover: 0 2px 6px rgba(31, 41, 51, 0.05), 0 24px 48px -22px rgba(31, 41, 51, 0.3);
+    --luma-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --luma-gutter: clamp(16px, 4vw, 48px);
+    --luma-space: clamp(72px, 9vw, 128px);
+    --luma-header-height: 72px;
+    --luma-font-body: var(--font-body-family, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+    --luma-font-heading: var(--font-heading-family, var(--luma-font-body));
+    --luma-heading-weight: var(--font-heading-weight, 500);
+    --luma-text-muted: color-mix(in srgb, var(--luma-text) 76%, var(--luma-bg));
+    --luma-line: color-mix(in srgb, var(--luma-text) 12%, transparent);
+    --luma-tint: color-mix(in srgb, var(--luma-text) 5%, var(--luma-bg));
+    --luma-accent-strong: color-mix(in srgb, var(--luma-accent) 78%, #000);
+    --luma-olive-soft: color-mix(in srgb, var(--luma-olive) 14%, var(--luma-surface));
+    --luma-focus: var(--luma-accent-strong);
+
+    background: var(--luma-bg);
+    color: var(--luma-text);
+    font-family: var(--luma-font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  .luma--heading-body { --luma-font-heading: var(--luma-font-body); }
+  .luma--heading-serif {
+    --luma-font-heading: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+    --luma-heading-weight: 400;
+  }
+
+  .luma *, .luma *::before, .luma *::after { box-sizing: border-box; }
+  .luma :where(h1, h2, h3, p, ul, figure, blockquote) { margin: 0; padding: 0; }
+  .luma :where(ul) { list-style: none; }
+  .luma :where(img, svg) { display: block; max-width: 100%; }
+  .luma :where(a) { color: inherit; }
+  .luma :where(a, button, input, select):focus-visible {
+    outline: 2px solid var(--luma-focus);
+    outline-offset: 3px;
+    box-shadow: none;
+  }
+  .luma [tabindex='-1']:focus { outline: none; }
+
+  .luma-visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .luma-skip-link {
+    position: absolute;
+    left: 16px; top: -100px;
+    z-index: 100;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: var(--luma-text);
+    color: var(--luma-bg);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .luma-skip-link:focus { top: 12px; }
+
+  .luma-container {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: var(--luma-gutter);
+  }
+  .luma-icon { width: 22px; height: 22px; flex: none; }
+
+  /* Tipografía */
+  .luma-heading {
+    font-family: var(--luma-font-heading);
+    font-weight: var(--luma-heading-weight);
+    color: inherit;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  .luma-heading em { font-style: italic; color: var(--luma-accent-strong); }
+  .luma-section__title { font-size: clamp(30px, 3.6vw, 50px); }
+  .luma-eyebrow {
+    margin-bottom: 14px;
+    color: var(--luma-olive);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Botones */
+  .luma-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 28px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font: 600 15px/1.2 var(--luma-font-body);
+    letter-spacing: 0.01em;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s var(--luma-ease);
+  }
+  .luma-btn .luma-icon--arrow { width: 18px; height: 18px; transition: transform 0.25s var(--luma-ease); }
+  .luma-btn:hover .luma-icon--arrow { transform: translateX(3px); }
+  .luma-btn--primary { background: var(--luma-text); color: var(--luma-bg); }
+  .luma-btn--primary:hover:not(:disabled) {
+    background: var(--luma-accent-strong);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px -12px var(--luma-accent-strong);
+  }
+  .luma-btn--secondary { background: transparent; color: var(--luma-text); border-color: color-mix(in srgb, currentColor 35%, transparent); }
+  .luma-btn--secondary:hover { border-color: var(--luma-text); background: var(--luma-text); color: var(--luma-bg); }
+  .luma-btn--light { background: var(--luma-surface); color: var(--luma-text); }
+  .luma-btn--light:hover { background: var(--luma-text); color: var(--luma-bg); }
+  .luma-btn--block { width: 100%; }
+  .luma-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+
+  .luma-link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .luma-link-arrow .luma-icon { width: 18px; height: 18px; transition: transform 0.25s var(--luma-ease); }
+  .luma-link-arrow--underline { padding-bottom: 4px; border-bottom: 1px solid currentColor; }
+  .luma-link-arrow:hover .luma-icon { transform: translateX(3px); }
+
+  .luma-icon-btn {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 44px; height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .luma-icon-btn:hover { background: var(--luma-tint); }
+
+  .luma-cover { width: 100%; height: 100%; object-fit: cover; }
+  .luma-placeholder { background: var(--luma-tint); fill: color-mix(in srgb, var(--luma-text) 28%, transparent); }
+
+  /* 1. Anuncio */
+  .luma-announcement {
+    background: var(--luma-announcement-bg);
+    color: var(--luma-announcement-text);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+  .luma-announcement__text { display: block; padding: 10px 0; text-decoration: none; }
+  a.luma-announcement__text:hover { text-decoration: underline; }
+
+  /* 2. Header */
+  .luma-header {
+    position: relative;
+    z-index: 30;
+    background: var(--luma-bg);
+    border-bottom: 1px solid var(--luma-line);
+  }
+  .luma--sticky .luma-header { position: sticky; top: 0; }
+  .luma-header__inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    min-height: 68px;
+    gap: 12px;
+  }
+  .luma-header__toggle { justify-self: start; margin-left: -10px; }
+  .luma-header__toggle .luma-icon--close,
+  .luma-header__toggle[aria-expanded='true'] .luma-icon--menu { display: none; }
+  .luma-header__toggle[aria-expanded='true'] .luma-icon--close { display: block; }
+  .luma-header__logo { display: inline-flex; align-items: center; text-decoration: none; }
+  .luma-header__logo-img { width: min(var(--luma-logo-width), 40vw); height: auto; }
+  .luma-wordmark {
+    font-family: var(--luma-font-heading);
+    font-size: 26px;
+    font-weight: var(--luma-heading-weight);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .luma-header__actions { display: flex; justify-self: end; gap: 2px; margin-right: -10px; }
+  .luma-header__search, .luma-header__account { display: none; }
+  .luma-cart-count {
+    position: absolute;
+    top: 4px; right: 2px;
+    display: grid;
+    place-items: center;
+    min-width: 18px; height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--luma-accent-strong);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .luma-cart-count[hidden] { display: none; }
+  .luma-cart-count.is-bumped { animation: luma-bump 0.45s var(--luma-ease); }
+
+  /* Menú móvil (panel lateral bajo el header) */
+  .luma-nav {
+    position: fixed;
+    top: var(--luma-header-bottom, 68px);
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: min(88vw, 380px);
+    padding: 28px var(--luma-gutter) 32px;
+    overflow-y: auto;
+    background: var(--luma-bg);
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition: transform 0.35s var(--luma-ease), visibility 0s linear 0.35s;
+  }
+  .luma.is-menu-open .luma-nav { visibility: visible; transform: none; transition: transform 0.35s var(--luma-ease); }
+  .luma-nav__list { display: grid; gap: 4px; }
+  .luma-nav__link {
+    display: block;
+    padding: 10px 0;
+    font-family: var(--luma-font-heading);
+    font-size: 28px;
+    font-weight: var(--luma-heading-weight);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+  .luma-nav__link:hover, .luma-nav__link[aria-current='page'] { color: var(--luma-accent-strong); }
+  .luma-nav__extra { display: grid; gap: 6px; padding-top: 24px; border-top: 1px solid var(--luma-line); }
+  .luma-nav__extra a { display: flex; align-items: center; gap: 12px; min-height: 44px; text-decoration: none; }
+  .luma-nav-backdrop {
+    position: fixed;
+    inset: var(--luma-header-bottom, 68px) 0 0 0;
+    z-index: 1;
+    background: rgba(31, 41, 51, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0s linear 0.3s;
+  }
+  .luma.is-menu-open .luma-nav-backdrop { opacity: 1; visibility: visible; transition: opacity 0.3s; }
+  html.luma-scroll-lock { overflow: hidden; }
+
+  @media (min-width: 990px) {
+    .luma-header__inner { grid-template-columns: auto 1fr auto; min-height: 80px; gap: 32px; }
+    .luma-header__toggle, .luma-nav__extra, .luma-nav-backdrop { display: none; }
+    .luma-header__search, .luma-header__account { display: inline-grid; }
+    .luma-nav {
+      position: static;
+      display: block;
+      width: auto;
+      padding: 0;
+      overflow: visible;
+      background: none;
+      visibility: visible;
+      transform: none;
+      transition: none;
+    }
+    .luma-nav__list { display: flex; justify-content: center; gap: clamp(16px, 2.4vw, 36px); }
+    .luma-nav__link {
+      position: relative;
+      padding: 8px 0;
+      font-family: var(--luma-font-body);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+    .luma-nav__link::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 2px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s var(--luma-ease);
+    }
+    .luma-nav__link:hover::after, .luma-nav__link[aria-current='page']::after { transform: scaleX(1); }
+  }
+
+  /* Secciones */
+  .luma-section { padding-block: var(--luma-space); }
+  .luma-section, .luma-benefits, .luma-newsletter, .luma-footer {
+    scroll-margin-top: calc(var(--luma-sticky-offset, 0px) + 8px);
+  }
+  .luma--sticky { --luma-sticky-offset: var(--luma-header-height); }
+  .luma-section__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 32px;
+    margin-bottom: clamp(32px, 4vw, 56px);
+  }
+  .luma-section__header--center { justify-content: center; text-align: center; }
+  .luma-hint { margin-top: 20px; color: var(--luma-text-muted); font-size: 14px; text-align: center; }
+
+  /* 3. Hero */
+  .luma-hero { padding-block: clamp(28px, 4vw, 56px) clamp(48px, 6vw, 88px); }
+  .luma-hero__grid { display: grid; gap: clamp(36px, 5vw, 80px); align-items: center; }
+  .luma-hero__content { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; max-width: 620px; }
+  .luma-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px 8px 12px;
+    border: 1px solid color-mix(in srgb, var(--luma-accent) 35%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--luma-accent) 10%, var(--luma-surface));
+    color: var(--luma-accent-strong);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .luma-badge__dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--luma-accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--luma-accent) 22%, transparent);
+  }
+  .luma-hero__title { font-size: clamp(44px, 6.4vw, 92px); line-height: 1.02; letter-spacing: -0.03em; }
+  .luma-hero__text { max-width: 480px; color: var(--luma-text-muted); font-size: clamp(17px, 1.4vw, 20px); line-height: 1.55; }
+  .luma-hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+  .luma-hero__note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid var(--luma-line);
+    color: var(--luma-text-muted);
+    font-size: 14px;
+  }
+  .luma-hero__note .luma-icon { color: var(--luma-olive); }
+  .luma-hero__media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--luma-radius-lg);
+    background: var(--luma-tint);
+  }
+  .luma-hero__card {
+    position: absolute;
+    left: 16px; bottom: 16px;
+    max-width: min(280px, calc(100% - 32px));
+    padding: 18px 20px;
+    border-radius: var(--luma-radius-sm);
+    background: var(--luma-surface);
+    color: var(--luma-text);
+    box-shadow: var(--luma-shadow);
+  }
+  .luma-hero__card-eyebrow { color: var(--luma-olive); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  .luma-hero__card-title { margin-top: 4px; font-family: var(--luma-font-heading); font-size: 24px; line-height: 1.15; }
+  .luma-hero__card-text { margin-top: 6px; color: var(--luma-text-muted); font-size: 14px; line-height: 1.45; }
+
+  @media (min-width: 750px) and (max-width: 989px) {
+    .luma-hero--split .luma-hero__media { aspect-ratio: 16 / 11; }
+  }
+  @media (min-width: 990px) {
+    .luma-hero--split .luma-hero__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+    .luma-hero--split .luma-hero__media { aspect-ratio: 5 / 6; }
+    .luma-hero__card { left: 28px; bottom: 28px; }
+  }
+
+  /* Hero con imagen de fondo */
+  .luma-hero--background {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(560px, 86vh, 880px);
+    padding-block: clamp(96px, 12vw, 160px) clamp(48px, 6vw, 88px);
+    color: #fff;
+  }
+  .luma-hero--background .luma-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+  .luma-hero--background .luma-hero__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, calc(var(--luma-hero-overlay) + 0.2)) 100%),
+      rgba(0, 0, 0, var(--luma-hero-overlay));
+  }
+  .luma-hero--background .luma-hero__text,
+  .luma-hero--background .luma-hero__note { color: rgba(255, 255, 255, 0.88); }
+  .luma-hero--background .luma-hero__note { border-color: rgba(255, 255, 255, 0.25); }
+  .luma-hero--background .luma-hero__note .luma-icon { color: inherit; }
+  .luma-hero--background .luma-heading em { color: inherit; }
+  .luma-hero--background .luma-btn--primary { background: #fff; color: #1f2933; }
+  .luma-hero--background .luma-btn--secondary { color: #fff; border-color: rgba(255, 255, 255, 0.6); }
+  .luma-hero--background .luma-btn--secondary:hover { background: #fff; color: #1f2933; }
+  .luma-hero--background .luma-hero__card { left: auto; right: var(--luma-gutter); bottom: clamp(48px, 6vw, 88px); z-index: 1; }
+  @media (max-width: 989px) {
+    .luma-hero--background .luma-hero__card { display: none; }
+  }
+
+  /* 4. Categorías */
+  .luma-categories__grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(78%, 340px);
+    gap: 16px;
+    margin-inline: calc(var(--luma-gutter) * -1);
+    padding: 4px var(--luma-gutter) 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--luma-gutter);
+    scrollbar-width: none;
+  }
+  .luma-categories__grid::-webkit-scrollbar { display: none; }
+  .luma-category {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--luma-radius);
+    background: var(--luma-surface);
+    scroll-snap-align: start;
+    transition: transform 0.35s var(--luma-ease), box-shadow 0.35s var(--luma-ease);
+  }
+  .luma-category__media { aspect-ratio: 4 / 5; overflow: hidden; background: var(--luma-tint); }
+  .luma-category__media .luma-cover { transition: transform 0.7s var(--luma-ease); }
+  .luma-category__body { display: grid; gap: 8px; padding: 20px 22px 24px; }
+  .luma-category__title { font-size: 26px; }
+  .luma-category__text { color: var(--luma-text-muted); font-size: 15px; line-height: 1.5; }
+  .luma-category .luma-link-arrow { margin-top: 6px; color: var(--luma-accent-strong); }
+  .luma-stretched-link { text-decoration: none; }
+  .luma-stretched-link::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+  .luma-stretched-link:focus-visible { outline: none; }
+  .luma-category:focus-within { outline: 2px solid var(--luma-focus); outline-offset: 3px; }
+  .luma-category:focus-within:not(:has(:focus-visible)) { outline: none; }
+  .luma-category:hover { transform: translateY(-4px); box-shadow: var(--luma-shadow-hover); }
+  .luma-category:hover .luma-cover { transform: scale(1.04); }
+  .luma-category:hover .luma-link-arrow .luma-icon { transform: translateX(3px); }
+  @media (min-width: 750px) {
+    .luma-categories__grid {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(16px, 2vw, 28px);
+      margin-inline: 0;
+      padding: 0;
+      overflow: visible;
+    }
+  }
+
+  /* 5. Productos */
+  .luma-products { background: var(--luma-tint); }
+  .luma-products__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
+  @media (min-width: 990px) {
+    .luma-products__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+  }
+  .luma-product {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--luma-radius);
+    background: var(--luma-surface);
+    transition: transform 0.35s var(--luma-ease), box-shadow 0.35s var(--luma-ease);
+  }
+  .luma-product:hover { transform: translateY(-4px); box-shadow: var(--luma-shadow-hover); }
+  .luma-product__media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--luma-tint); }
+  .luma-product__media-link { position: absolute; inset: 0; display: block; }
+  .luma-product__img {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.45s ease, transform 0.7s var(--luma-ease);
+  }
+  .luma-product__img--secondary { opacity: 0; }
+  .luma-product:hover .luma-product__img { transform: scale(1.03); }
+  .luma-product:hover .luma-product__img--secondary { opacity: 1; }
+  .luma-tag {
+    position: absolute;
+    top: 12px; left: 12px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+  .luma-tag[hidden] { display: none; }
+  .luma-tag--sale { background: var(--luma-accent-strong); color: #fff; }
+  .luma-tag--muted { background: var(--luma-text); color: var(--luma-bg); }
+  .luma-fav {
+    position: absolute;
+    top: 8px; right: 8px;
+    display: grid;
+    place-items: center;
+    width: 40px; height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--luma-surface) 88%, transparent);
+    color: var(--luma-text);
+    cursor: pointer;
+    transition: transform 0.2s var(--luma-ease), color 0.2s;
+  }
+  .luma-fav .luma-icon { width: 20px; height: 20px; transition: fill 0.2s; }
+  .luma-fav:hover { transform: scale(1.08); color: var(--luma-accent-strong); }
+  .luma-fav[aria-pressed='true'] { color: var(--luma-accent-strong); }
+  .luma-fav[aria-pressed='true'] .luma-icon { fill: currentColor; animation: luma-bump 0.4s var(--luma-ease); }
+  .luma-product__body { display: flex; flex: 1; flex-direction: column; gap: 8px; padding: 14px 14px 16px; }
+  .luma-product__vendor { color: var(--luma-text-muted); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .luma-product__title { font-family: var(--luma-font-body); font-size: 15px; font-weight: 600; line-height: 1.35; }
+  .luma-product__title a { text-decoration: none; }
+  .luma-product__title a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .luma-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 15px; }
+  .luma-price__current { font-weight: 600; }
+  .luma-price__current--sale { color: var(--luma-accent-strong); }
+  .luma-price__compare { color: var(--luma-text-muted); font-size: 14px; }
+  .luma-price__compare[hidden] { display: none; }
+  .luma-product__form { display: grid; gap: 10px; margin-top: auto; padding-top: 8px; }
+  .luma-select { position: relative; }
+  .luma-select::after {
+    content: '';
+    position: absolute;
+    top: 50%; right: 16px;
+    width: 7px; height: 7px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+  .luma-select__input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 40px 0 14px;
+    border: 1px solid var(--luma-line);
+    border-radius: 999px;
+    background: var(--luma-surface);
+    color: var(--luma-text);
+    font: 500 14px/1.2 var(--luma-font-body);
+    appearance: none;
+    cursor: pointer;
+  }
+  .luma-add { min-height: 46px; padding: 0 14px; font-size: 14px; }
+  .luma-add__label { transition: opacity 0.2s; }
+  .luma-spinner {
+    position: absolute;
+    width: 18px; height: 18px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    opacity: 0;
+  }
+  .luma-add[data-state='loading'] .luma-add__label { opacity: 0; }
+  .luma-add[data-state='loading'] .luma-spinner { opacity: 1; animation: luma-spin 0.7s linear infinite; }
+  .luma-add[data-state='added'], .luma-add[data-state='added']:hover { background: var(--luma-olive); color: #fff; }
+  .luma-product__error { color: var(--luma-accent-strong); font-size: 13px; line-height: 1.4; }
+  .luma-product--placeholder .luma-btn { margin-top: auto; }
+  @media (max-width: 749px) {
+    .luma-product__body { padding: 12px 12px 14px; }
+    .luma-product__title { font-size: 14px; }
+  }
+
+  /* 6. Editorial */
+  .luma-editorial__grid { display: grid; gap: clamp(36px, 5vw, 88px); align-items: center; }
+  .luma-editorial__media { aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--luma-radius-lg); background: var(--luma-tint); }
+  .luma-editorial__content { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; max-width: 540px; }
+  .luma-rte { color: var(--luma-text-muted); font-size: 17px; }
+  .luma-rte > * + * { margin-top: 14px; }
+  .luma-editorial__points { display: grid; gap: 12px; width: 100%; padding-block: 6px; }
+  .luma-editorial__points li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--luma-line);
+    font-weight: 500;
+  }
+  .luma-editorial__points .luma-icon {
+    width: 28px; height: 28px;
+    padding: 5px;
+    border-radius: 50%;
+    background: var(--luma-olive-soft);
+    color: var(--luma-olive);
+  }
+  @media (min-width: 990px) {
+    .luma-editorial__grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+    .luma-editorial__media { aspect-ratio: 5 / 6; }
+    .luma-editorial--image-right .luma-editorial__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+    .luma-editorial--image-right .luma-editorial__media { order: 2; }
+  }
+
+  /* 7. Beneficios */
+  .luma-benefits { padding-block: clamp(40px, 5vw, 64px); border-block: 1px solid var(--luma-line); background: var(--luma-surface); }
+  .luma-benefits__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
+  .luma-benefit { display: flex; flex-direction: column; gap: 14px; }
+  .luma-benefit__icon {
+    display: grid;
+    place-items: center;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--luma-olive-soft);
+    color: var(--luma-olive);
+  }
+  .luma-benefit__title { font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .luma-benefit__text { margin-top: 4px; color: var(--luma-text-muted); font-size: 14px; line-height: 1.5; }
+  @media (min-width: 990px) {
+    .luma-benefits__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+    .luma-benefit { flex-direction: row; align-items: flex-start; }
+    .luma-benefit + .luma-benefit { padding-left: 32px; border-left: 1px solid var(--luma-line); }
+  }
+
+  /* 8. Testimonios */
+  .luma-testimonials__grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(84%, 380px);
+    gap: 16px;
+    margin-inline: calc(var(--luma-gutter) * -1);
+    padding: 4px var(--luma-gutter) 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--luma-gutter);
+    scrollbar-width: none;
+  }
+  .luma-testimonials__grid::-webkit-scrollbar { display: none; }
+  .luma-testimonial { scroll-snap-align: start; }
+  .luma-testimonial figure {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    height: 100%;
+    padding: clamp(24px, 3vw, 36px);
+    border: 1px solid var(--luma-line);
+    border-radius: var(--luma-radius);
+    background: var(--luma-surface);
+    transition: transform 0.35s var(--luma-ease), box-shadow 0.35s var(--luma-ease);
+  }
+  .luma-testimonial figure:hover { transform: translateY(-3px); box-shadow: var(--luma-shadow); }
+  .luma-stars { display: flex; gap: 2px; }
+  .luma-star { width: 18px; height: 18px; fill: var(--luma-accent); }
+  .luma-stars__item.is-empty .luma-star { fill: var(--luma-line); }
+  .luma-quote-mark { width: 30px; height: 22px; fill: color-mix(in srgb, var(--luma-accent) 30%, transparent); }
+  .luma-testimonial__quote { flex: 1; font-family: var(--luma-font-heading); font-size: clamp(19px, 1.6vw, 22px); line-height: 1.45; }
+  .luma-testimonial__author { display: flex; align-items: center; gap: 12px; font-size: 15px; }
+  .luma-testimonial__avatar {
+    display: grid;
+    place-items: center;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--luma-olive-soft);
+    color: var(--luma-olive);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .luma-testimonial__author strong { display: block; font-weight: 600; }
+  .luma-testimonial__city { display: block; color: var(--luma-text-muted); font-size: 14px; }
+  @media (min-width: 750px) {
+    .luma-testimonials__grid {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      margin-inline: 0;
+      padding: 0;
+      overflow: visible;
+    }
+  }
+
+  /* 9. Newsletter */
+  .luma-newsletter { padding-bottom: var(--luma-space); }
+  .luma-newsletter__panel {
+    display: grid;
+    gap: 28px;
+    padding: clamp(32px, 6vw, 80px);
+    border-radius: var(--luma-radius-lg);
+    background: var(--luma-newsletter-bg);
+    color: var(--luma-newsletter-text);
+  }
+  .luma-newsletter__title { font-size: clamp(30px, 3.6vw, 48px); }
+  .luma-newsletter__text { margin-top: 14px; max-width: 460px; opacity: 0.92; font-size: 17px; }
+  .luma-newsletter__form { display: grid; gap: 12px; align-content: center; }
+  .luma-newsletter__field { display: grid; gap: 10px; }
+  .luma-input {
+    width: 100%;
+    min-height: 54px;
+    padding: 0 22px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: var(--luma-surface);
+    color: var(--luma-text);
+    font: 400 16px/1.2 var(--luma-font-body);
+  }
+  .luma-input::placeholder { color: color-mix(in srgb, var(--luma-text) 55%, var(--luma-surface)); }
+  .luma-input[aria-invalid='true'] { border-color: #8a2c1a; box-shadow: 0 0 0 2px #fff; }
+  .luma-newsletter .luma-btn--light { min-height: 54px; background: var(--luma-text); color: var(--luma-bg); }
+  .luma-newsletter .luma-btn--light:hover { background: var(--luma-surface); color: var(--luma-text); }
+  .luma-newsletter :where(a, button, input):focus-visible { outline-color: var(--luma-newsletter-text); }
+  .luma-form-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: var(--luma-radius-sm);
+    background: var(--luma-surface);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+  .luma-form-msg .luma-icon { width: 20px; height: 20px; }
+  .luma-form-msg--error { color: #8a2c1a; }
+  .luma-form-msg--success { color: color-mix(in srgb, var(--luma-olive) 70%, #000); }
+  .luma-newsletter__note { opacity: 0.85; font-size: 13px; }
+  @media (min-width: 560px) {
+    .luma-newsletter__field {
+      grid-template-columns: 1fr auto;
+      padding: 6px;
+      border-radius: 999px;
+      background: var(--luma-surface);
+    }
+    .luma-newsletter__field .luma-input { min-height: 50px; padding-inline: 18px; }
+    .luma-newsletter__field .luma-input:focus-visible { outline-offset: -2px; outline-color: var(--luma-text); }
+    .luma-newsletter__field .luma-btn { min-height: 50px; }
+  }
+  @media (min-width: 990px) {
+    .luma-newsletter__panel { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 64px; }
+  }
+
+  /* 10. Footer */
+  .luma-footer {
+    padding-top: clamp(56px, 7vw, 96px);
+    background: var(--luma-footer-bg);
+    color: var(--luma-footer-text);
+    font-size: 15px;
+    --luma-focus: var(--luma-footer-text);
+  }
+  .luma-footer a { color: color-mix(in srgb, var(--luma-footer-text) 80%, var(--luma-footer-bg)); text-decoration: none; transition: color 0.2s; }
+  .luma-footer a:hover { color: var(--luma-footer-text); }
+  .luma-footer__grid { display: grid; gap: 40px; padding-bottom: 48px; }
+  .luma-footer__brand { display: grid; gap: 18px; justify-items: start; max-width: 380px; }
+  .luma-wordmark--footer { font-size: 32px; }
+  .luma-footer__logo { width: 140px; height: auto; }
+  .luma-footer__text { color: color-mix(in srgb, var(--luma-footer-text) 80%, var(--luma-footer-bg)); line-height: 1.6; }
+  .luma-footer__heading { margin-bottom: 16px; font-family: var(--luma-font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  .luma-footer__nav ul { display: grid; gap: 4px; }
+  .luma-footer__nav a { display: inline-block; padding: 6px 0; }
+  .luma-footer__contact-text { color: color-mix(in srgb, var(--luma-footer-text) 80%, var(--luma-footer-bg)); line-height: 1.7; }
+  .luma-footer__contact-text a { text-decoration: underline; text-underline-offset: 3px; }
+  .luma-social { display: flex; gap: 8px; }
+  .luma-footer .luma-social__link {
+    display: grid;
+    place-items: center;
+    width: 44px; height: 44px;
+    border: 1px solid color-mix(in srgb, var(--luma-footer-text) 25%, transparent);
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s var(--luma-ease);
+  }
+  .luma-footer .luma-social__link:hover { background: var(--luma-footer-text); color: var(--luma-footer-bg); transform: translateY(-2px); }
+  .luma-social .luma-icon { width: 20px; height: 20px; }
+  .luma-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 22px 28px;
+    border-top: 1px solid color-mix(in srgb, var(--luma-footer-text) 15%, transparent);
+    color: color-mix(in srgb, var(--luma-footer-text) 75%, var(--luma-footer-bg));
+    font-size: 13px;
+  }
+  @media (min-width: 750px) {
+    .luma-footer__grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr); }
+  }
+
+  /* Aparición al hacer scroll (solo si el JS la activa) */
+  .luma.is-animated [data-luma-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.8s var(--luma-ease), transform 0.8s var(--luma-ease);
+  }
+  .luma.is-animated [data-luma-reveal].is-visible { opacity: 1; transform: none; }
+
+  @keyframes luma-spin { to { transform: rotate(360deg); } }
+  @keyframes luma-bump { 50% { transform: scale(1.25); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .luma *, .luma *::before, .luma *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (() => {
+    if (customElements.get('luma-landing')) return;
+
+    const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rootPath = () => (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    const itemsLabel = (count) => `Carrito, ${count} ${count === 1 ? 'artículo' : 'artículos'}`;
+
+    class LumaLanding extends HTMLElement {
+      connectedCallback() {
+        this.header = this.querySelector('[data-luma-header]');
+        this.menuToggle = this.querySelector('[data-luma-menu-toggle]');
+        this.menu = this.querySelector('[data-luma-menu]');
+        this.status = this.querySelector('[data-luma-status]');
+        this.controller = new AbortController();
+        const options = { signal: this.controller.signal };
+
+        this.addEventListener('click', (event) => this.onClick(event), options);
+        this.addEventListener('submit', (event) => this.onSubmit(event), options);
+        this.addEventListener('change', (event) => this.onChange(event), options);
+        this.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && this.isMenuOpen()) {
+            this.toggleMenu(false);
+            this.menuToggle.focus();
+          }
+        }, options);
+
+        window.matchMedia('(min-width: 990px)').addEventListener('change', (event) => {
+          if (event.matches) this.toggleMenu(false);
+        }, options);
+
+        if (this.header) {
+          this.headerObserver = new ResizeObserver(() => {
+            this.style.setProperty('--luma-header-height', `${this.header.offsetHeight}px`);
+          });
+          this.headerObserver.observe(this.header);
+        }
+
+        this.initReveal();
+        this.focusNewsletterResult();
+      }
+
+      disconnectedCallback() {
+        this.toggleMenu(false);
+        this.controller.abort();
+        if (this.headerObserver) this.headerObserver.disconnect();
+        if (this.revealObserver) this.revealObserver.disconnect();
+      }
+
+      /* Menú móvil */
+      isMenuOpen() {
+        return Boolean(this.menuToggle) && this.menuToggle.getAttribute('aria-expanded') === 'true';
+      }
+
+      toggleMenu(force) {
+        if (!this.menuToggle || !this.menu) return;
+        const open = typeof force === 'boolean' ? force : !this.isMenuOpen();
+        if (open === this.isMenuOpen()) return;
+
+        if (open) {
+          const bottom = Math.max(0, this.header.getBoundingClientRect().bottom);
+          this.style.setProperty('--luma-header-bottom', `${bottom}px`);
+        }
+        this.menuToggle.setAttribute('aria-expanded', String(open));
+        this.menuToggle.querySelector('[data-luma-menu-label]').textContent = open ? 'Cerrar menú' : 'Abrir menú';
+        this.classList.toggle('is-menu-open', open);
+        document.documentElement.classList.toggle('luma-scroll-lock', open);
+        this.querySelectorAll('[data-luma-inert]').forEach((element) => { element.inert = open; });
+        if (open) {
+          const firstLink = this.menu.querySelector('a');
+          if (firstLink) firstLink.focus({ preventScroll: true });
+        }
+      }
+
+      /* Clics: favoritos, menú y anclas internas */
+      onClick(event) {
+        if (event.target.closest('[data-luma-menu-toggle]')) {
+          this.toggleMenu();
+          return;
+        }
+        if (event.target.closest('[data-luma-backdrop]')) {
+          this.toggleMenu(false);
+          return;
+        }
+
+        const fav = event.target.closest('[data-luma-fav]');
+        if (fav) {
+          const pressed = fav.getAttribute('aria-pressed') !== 'true';
+          fav.setAttribute('aria-pressed', String(pressed));
+          this.announce(pressed ? 'Guardado en favoritos' : 'Quitado de favoritos');
+          return;
+        }
+
+        const link = event.target.closest('a[href]');
+        if (!link) return;
+        const inMenu = Boolean(link.closest('[data-luma-menu]'));
+        const url = new URL(link.href, window.location.href);
+        const samePage = url.origin === window.location.origin && url.pathname === window.location.pathname;
+        const modified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+
+        if (samePage && url.hash.length > 1 && !modified) {
+          const target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+          if (target) {
+            event.preventDefault();
+            this.toggleMenu(false);
+            this.scrollToTarget(target);
+            history.pushState(null, '', url.hash);
+            return;
+          }
+        }
+        if (inMenu) this.toggleMenu(false);
+      }
+
+      scrollToTarget(target) {
+        target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+        if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+      }
+
+      /* Formularios */
+      onSubmit(event) {
+        const form = event.target;
+        if (form.matches('[data-luma-cart-form]')) this.addToCart(event, form);
+        if (form.matches('[data-luma-newsletter]')) this.validateNewsletter(event, form);
+      }
+
+      async addToCart(event, form) {
+        event.preventDefault();
+        const button = form.querySelector('[data-luma-add]');
+        const label = form.querySelector('[data-luma-add-label]');
+        const error = form.querySelector('[data-luma-form-error]');
+        if (!button || button.getAttribute('aria-busy') === 'true') return;
+
+        if (!button.dataset.label) button.dataset.label = label.textContent;
+        clearTimeout(button.lumaTimer);
+        button.setAttribute('aria-busy', 'true');
+        button.dataset.state = 'loading';
+        if (error) error.hidden = true;
+
+        try {
+          const response = await fetch(`${rootPath()}cart/add.js`, {
+            method: 'POST',
+            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body: new FormData(form),
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.description || data.message || 'No se pudo agregar el producto.');
+
+          button.dataset.state = 'added';
+          label.textContent = 'Agregado ✓';
+          this.announce(`${data.title || 'Producto'} se agregó al carrito`);
+          await this.refreshCart();
+          document.dispatchEvent(new CustomEvent('luma:cart:added', { detail: data }));
+        } catch (err) {
+          delete button.dataset.state;
+          label.textContent = button.dataset.label;
+          if (error) {
+            error.textContent = err.message;
+            error.hidden = false;
+          }
+        } finally {
+          button.removeAttribute('aria-busy');
+          if (button.dataset.state === 'added') {
+            button.lumaTimer = setTimeout(() => {
+              delete button.dataset.state;
+              label.textContent = button.dataset.label;
+            }, 2200);
+          }
+        }
+      }
+
+      async refreshCart() {
+        try {
+          const response = await fetch(`${rootPath()}cart.js`, { headers: { Accept: 'application/json' } });
+          const cart = await response.json();
+          document.querySelectorAll('[data-luma-cart-count]').forEach((badge) => {
+            badge.textContent = cart.item_count;
+            badge.hidden = cart.item_count === 0;
+            badge.classList.remove('is-bumped');
+            void badge.offsetWidth;
+            badge.classList.add('is-bumped');
+          });
+          document.querySelectorAll('[data-luma-cart-link]').forEach((link) => {
+            link.setAttribute('aria-label', itemsLabel(cart.item_count));
+          });
+        } catch (err) {
+          /* El contador se actualizará al recargar la página. */
+        }
+      }
+
+      validateNewsletter(event, form) {
+        const input = form.querySelector('input[type="email"]');
+        const region = form.querySelector('[data-luma-newsletter-msg]');
+        if (!input || (input.value.trim() !== '' && input.checkValidity())) return;
+
+        event.preventDefault();
+        input.setAttribute('aria-invalid', 'true');
+        region.innerHTML = '';
+        const message = document.createElement('p');
+        message.className = 'luma-form-msg luma-form-msg--error';
+        message.setAttribute('role', 'alert');
+        message.textContent = input.value.trim() === ''
+          ? 'Escribe tu correo electrónico para suscribirte.'
+          : 'Revisa tu correo: debe tener el formato nombre@correo.com.';
+        region.appendChild(message);
+        input.focus();
+        input.addEventListener('input', () => input.removeAttribute('aria-invalid'), { once: true });
+      }
+
+      focusNewsletterResult() {
+        const result = this.querySelector('[data-luma-newsletter-result]');
+        if (!result || (window.Shopify && window.Shopify.designMode)) return;
+        const revealed = result.closest('[data-luma-reveal]');
+        if (revealed) revealed.classList.add('is-visible');
+        // Espera a que el navegador termine de saltar al #ancla del formulario.
+        window.setTimeout(() => {
+          result.scrollIntoView({ block: 'center' });
+          result.focus({ preventScroll: true });
+        }, 60);
+      }
+
+      /* Cambio de variante: precio, precio comparativo y descuento */
+      onChange(event) {
+        const select = event.target.closest('[data-luma-variant]');
+        if (!select) return;
+        const option = select.selectedOptions[0];
+        const card = select.closest('[data-luma-product]');
+        const price = card.querySelector('[data-luma-price]');
+        const compare = card.querySelector('[data-luma-compare]');
+        const compareValue = card.querySelector('[data-luma-compare-value]');
+        const discount = card.querySelector('[data-luma-discount]');
+        const onSale = option.dataset.compare !== '';
+
+        price.textContent = option.dataset.price;
+        price.classList.toggle('luma-price__current--sale', onSale);
+        compareValue.textContent = option.dataset.compare;
+        compare.hidden = !onSale;
+        if (discount) {
+          discount.textContent = `-${option.dataset.discount}%`;
+          discount.hidden = !onSale;
+        }
+      }
+
+      /* Aparición suave al hacer scroll */
+      initReveal() {
+        if (!this.hasAttribute('data-luma-animate') || prefersReducedMotion() || !('IntersectionObserver' in window)) return;
+        const items = this.querySelectorAll('[data-luma-reveal]');
+        if (!items.length) return;
+
+        this.classList.add('is-animated');
+        this.revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            this.revealObserver.unobserve(entry.target);
+          });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+        items.forEach((item) => this.revealObserver.observe(item));
+      }
+
+      announce(message) {
+        if (!this.status) return;
+        this.status.textContent = '';
+        window.requestAnimationFrame(() => { this.status.textContent = message; });
+      }
+    }
+
+    customElements.define('luma-landing', LumaLanding);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Luma · Landing page",
+  "tag": "div",
+  "disabled_on": {
+    "groups": ["*"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Estructura"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Mostrar barra de anuncio",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Mostrar header propio",
+      "info": "Desactívalo si usas esta sección dentro del layout normal del tema (que ya tiene header).",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_footer",
+      "label": "Mostrar footer propio",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Mostrar newsletter",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reveal",
+      "label": "Animación suave al hacer scroll",
+      "info": "Se desactiva sola si el visitante pidió reducir movimiento.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "Fondo",
+      "default": "#F7F6F2"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Texto",
+      "default": "#1F2933"
+    },
+    {
+      "type": "color",
+      "id": "color_surface",
+      "label": "Tarjetas",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "color_accent",
+      "label": "Acento (terracota)",
+      "default": "#C96B4B"
+    },
+    {
+      "type": "color",
+      "id": "color_olive",
+      "label": "Acento secundario (verde oliva)",
+      "default": "#6D7657"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Fuente de títulos",
+      "info": "Usa las fuentes del tema (Configuración del tema > Tipografía). La opción serif usa fuentes del sistema, sin descargas.",
+      "options": [
+        { "value": "theme", "label": "Títulos del tema" },
+        { "value": "body", "label": "Cuerpo del tema" },
+        { "value": "serif", "label": "Serif editorial del sistema" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "header",
+      "content": "Barra de anuncio"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Mensaje",
+      "default": "Envío gratis en pedidos superiores a $999"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "Enlace (opcional)"
+    },
+    {
+      "type": "color",
+      "id": "announcement_bg",
+      "label": "Fondo",
+      "default": "#1F2933"
+    },
+    {
+      "type": "color",
+      "id": "announcement_text_color",
+      "label": "Texto",
+      "default": "#F7F6F2"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Nombre de la marca",
+      "info": "Se usa si no hay logo y en el copyright. Vacío = nombre de la tienda.",
+      "default": "Luma"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Ancho del logo",
+      "min": 60,
+      "max": 260,
+      "step": 4,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "link_list",
+      "id": "header_menu",
+      "label": "Menú de Shopify (opcional)",
+      "info": "Si eliges un menú, reemplaza a los bloques «Enlace del menú»."
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Header fijo al hacer scroll",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "select",
+      "id": "hero_layout",
+      "label": "Diseño",
+      "options": [
+        { "value": "split", "label": "Imagen a la derecha" },
+        { "value": "background", "label": "Imagen de fondo" }
+      ],
+      "default": "split"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "range",
+      "id": "hero_overlay",
+      "label": "Oscurecer imagen de fondo",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "text",
+      "id": "hero_badge",
+      "label": "Badge",
+      "default": "Nueva colección"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "hero_title",
+      "label": "Título",
+      "default": "Diseño que acompaña <em>tu día</em>"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "hero_text",
+      "label": "Texto",
+      "default": "Objetos funcionales y bellos, seleccionados para hacer especial lo cotidiano."
+    },
+    {
+      "type": "text",
+      "id": "hero_primary_label",
+      "label": "Botón principal",
+      "default": "Comprar ahora"
+    },
+    {
+      "type": "url",
+      "id": "hero_primary_link",
+      "label": "Enlace del botón principal",
+      "info": "Vacío = baja a «Productos destacados»."
+    },
+    {
+      "type": "text",
+      "id": "hero_secondary_label",
+      "label": "Botón secundario",
+      "default": "Ver colección"
+    },
+    {
+      "type": "url",
+      "id": "hero_secondary_link",
+      "label": "Enlace del botón secundario",
+      "info": "Vacío = colección destacada o todos los productos."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "hero_note",
+      "label": "Indicador de envío o promoción",
+      "default": "Envío gratis desde $999 · Entrega en 24–72 h"
+    },
+    {
+      "type": "text",
+      "id": "hero_card_eyebrow",
+      "label": "Tarjeta flotante: etiqueta",
+      "default": "Solo esta semana"
+    },
+    {
+      "type": "text",
+      "id": "hero_card_title",
+      "label": "Tarjeta flotante: título",
+      "info": "Déjalo vacío para ocultar la tarjeta.",
+      "default": "Hasta 25% off"
+    },
+    {
+      "type": "text",
+      "id": "hero_card_text",
+      "label": "Tarjeta flotante: texto",
+      "default": "En piezas seleccionadas de cerámica y escritorio."
+    },
+    {
+      "type": "header",
+      "content": "Categorías destacadas"
+    },
+    {
+      "type": "text",
+      "id": "categories_eyebrow",
+      "label": "Etiqueta",
+      "default": "Explora"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "categories_heading",
+      "label": "Título",
+      "default": "Encuentra tu espacio"
+    },
+    {
+      "type": "header",
+      "content": "Productos destacados"
+    },
+    {
+      "type": "text",
+      "id": "products_eyebrow",
+      "label": "Etiqueta",
+      "default": "Lo más querido"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "products_heading",
+      "label": "Título",
+      "default": "Favoritos de la semana"
+    },
+    {
+      "type": "collection",
+      "id": "featured_collection",
+      "label": "Colección"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Productos a mostrar",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "products_view_all",
+      "label": "Texto de «ver todo»",
+      "default": "Ver todo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_second_image",
+      "label": "Mostrar segunda imagen al pasar el cursor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Mostrar marca del producto",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Bloque editorial"
+    },
+    {
+      "type": "image_picker",
+      "id": "editorial_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "select",
+      "id": "editorial_image_position",
+      "label": "Posición de la imagen en escritorio",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "editorial_eyebrow",
+      "label": "Etiqueta",
+      "default": "Nuestra filosofía"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "editorial_heading",
+      "label": "Título",
+      "default": "Hecho para <em>quedarse</em>"
+    },
+    {
+      "type": "richtext",
+      "id": "editorial_text",
+      "label": "Texto",
+      "default": "<p>Elegimos materiales nobles y talleres que trabajan con calma. Cada pieza está pensada para usarse todos los días, envejecer bien y acompañarte durante años, no temporadas.</p>"
+    },
+    {
+      "type": "text",
+      "id": "editorial_point_1",
+      "label": "Punto destacado 1",
+      "default": "Materiales duraderos y trazables"
+    },
+    {
+      "type": "text",
+      "id": "editorial_point_2",
+      "label": "Punto destacado 2",
+      "default": "Producción responsable en pequeños lotes"
+    },
+    {
+      "type": "text",
+      "id": "editorial_point_3",
+      "label": "Punto destacado 3",
+      "default": "Diseño atemporal, garantía de 2 años"
+    },
+    {
+      "type": "text",
+      "id": "editorial_button_label",
+      "label": "Botón",
+      "default": "Conoce nuestra historia"
+    },
+    {
+      "type": "url",
+      "id": "editorial_button_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "Beneficios y testimonios"
+    },
+    {
+      "type": "text",
+      "id": "benefits_heading",
+      "label": "Título de beneficios (solo lectores de pantalla)",
+      "default": "Por qué comprar en Luma"
+    },
+    {
+      "type": "text",
+      "id": "testimonials_eyebrow",
+      "label": "Etiqueta de testimonios",
+      "default": "Opiniones reales"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "testimonials_heading",
+      "label": "Título de testimonios",
+      "default": "Lo que dicen de nosotros"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "newsletter_heading",
+      "label": "Título",
+      "default": "Recibe inspiración en tu correo"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "newsletter_text",
+      "label": "Texto",
+      "default": "Lanzamientos, ideas para tu casa y un 10% de descuento en tu primera compra."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_placeholder",
+      "label": "Placeholder del campo",
+      "default": "tu@correo.com"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_button",
+      "label": "Botón",
+      "default": "Suscribirme"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_success",
+      "label": "Mensaje de éxito",
+      "default": "¡Gracias! Ya estás en la lista. Revisa tu bandeja de entrada."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_note",
+      "label": "Nota de privacidad",
+      "default": "Sin spam. Puedes darte de baja cuando quieras."
+    },
+    {
+      "type": "color",
+      "id": "newsletter_bg",
+      "label": "Fondo",
+      "default": "#6D7657"
+    },
+    {
+      "type": "color",
+      "id": "newsletter_text_color",
+      "label": "Texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Footer"
+    },
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Logo (versión clara)"
+    },
+    {
+      "type": "textarea",
+      "id": "footer_text",
+      "label": "Texto de marca",
+      "default": "Objetos de diseño para la vida diaria. Seleccionados con calma, hechos para durar."
+    },
+    {
+      "type": "text",
+      "id": "footer_links_heading",
+      "label": "Título de enlaces",
+      "default": "Ayuda"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu",
+      "label": "Menú de Shopify (opcional)",
+      "info": "Si eliges un menú, reemplaza a los bloques «Enlace del footer»."
+    },
+    {
+      "type": "text",
+      "id": "footer_contact_heading",
+      "label": "Título de contacto",
+      "default": "Contacto"
+    },
+    {
+      "type": "richtext",
+      "id": "footer_contact",
+      "label": "Datos de contacto",
+      "default": "<p>hola@lumastore.mx<br>Lunes a viernes, 9:00 a 18:00</p>"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram",
+      "info": "Vacío = usa el de Configuración del tema o instagram.com."
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "Facebook"
+    },
+    {
+      "type": "url",
+      "id": "social_tiktok",
+      "label": "TikTok"
+    },
+    {
+      "type": "text",
+      "id": "footer_tagline",
+      "label": "Texto inferior",
+      "default": "Hecho con calma en México."
+    },
+    {
+      "type": "color",
+      "id": "footer_bg",
+      "label": "Fondo",
+      "default": "#1F2933"
+    },
+    {
+      "type": "color",
+      "id": "footer_text_color",
+      "label": "Texto",
+      "default": "#F7F6F2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "nav_link",
+      "name": "Enlace del menú",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Texto",
+          "default": "Enlace"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace"
+        },
+        {
+          "type": "select",
+          "id": "anchor",
+          "label": "Sin enlace, ir a",
+          "info": "Se usa solo si «Enlace» está vacío.",
+          "options": [
+            { "value": "none", "label": "Inicio de la tienda" },
+            { "value": "categorias", "label": "Categorías" },
+            { "value": "productos", "label": "Productos destacados" },
+            { "value": "historia", "label": "Bloque editorial" },
+            { "value": "beneficios", "label": "Beneficios" },
+            { "value": "testimonios", "label": "Testimonios" },
+            { "value": "newsletter", "label": "Newsletter" },
+            { "value": "contacto", "label": "Footer / contacto" }
+          ],
+          "default": "none"
+        }
+      ]
+    },
+    {
+      "type": "category",
+      "name": "Categoría",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección (opcional)",
+          "info": "Rellena imagen, título y enlace si los dejas vacíos."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Categoría"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto breve",
+          "default": "Describe esta categoría en una línea."
+        },
+        {
+          "type": "text",
+          "id": "cta",
+          "label": "Texto del enlace",
+          "default": "Explorar"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace"
+        }
+      ]
+    },
+    {
+      "type": "benefit",
+      "name": "Beneficio",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icono",
+          "options": [
+            { "value": "truck", "label": "Camión" },
+            { "value": "lock", "label": "Candado" },
+            { "value": "return", "label": "Devolución" },
+            { "value": "chat", "label": "Chat" },
+            { "value": "leaf", "label": "Hoja" },
+            { "value": "gift", "label": "Regalo" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Beneficio"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto",
+          "default": "Describe el beneficio en una línea."
+        }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "name": "Testimonio",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Cita",
+          "default": "Escribe aquí lo que opina tu cliente."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Nombre",
+          "default": "Nombre del cliente"
+        },
+        {
+          "type": "text",
+          "id": "city",
+          "label": "Ciudad (opcional)"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Calificación",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    },
+    {
+      "type": "footer_link",
+      "name": "Enlace del footer",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Texto",
+          "default": "Enlace"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace"
+        },
+        {
+          "type": "select",
+          "id": "page",
+          "label": "Sin enlace, ir a",
+          "info": "Usa las políticas configuradas en Configuración > Políticas.",
+          "options": [
+            { "value": "none", "label": "Inicio de la tienda" },
+            { "value": "contact", "label": "Página de contacto" },
+            { "value": "shipping", "label": "Política de envío" },
+            { "value": "refund", "label": "Política de reembolso" },
+            { "value": "privacy", "label": "Política de privacidad" },
+            { "value": "terms", "label": "Términos del servicio" }
+          ],
+          "default": "none"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luma · Landing page",
+      "blocks": [
+        { "type": "nav_link", "settings": { "title": "Inicio", "anchor": "none" } },
+        { "type": "nav_link", "settings": { "title": "Nuevos lanzamientos", "anchor": "productos" } },
+        { "type": "nav_link", "settings": { "title": "Colecciones", "anchor": "categorias" } },
+        { "type": "nav_link", "settings": { "title": "Nosotros", "anchor": "historia" } },
+        { "type": "nav_link", "settings": { "title": "Contacto", "anchor": "contacto" } },
+        {
+          "type": "category",
+          "settings": { "title": "Hogar", "text": "Cerámica, textiles y luz cálida para habitar con calma." }
+        },
+        {
+          "type": "category",
+          "settings": { "title": "Accesorios", "text": "Piezas ligeras y nobles que viajan contigo." }
+        },
+        {
+          "type": "category",
+          "settings": { "title": "Oficina", "text": "Escritorios ordenados, ideas más claras." }
+        },
+        {
+          "type": "benefit",
+          "settings": { "icon": "truck", "title": "Envíos rápidos", "text": "Entrega en 24–72 h a todo el país." }
+        },
+        {
+          "type": "benefit",
+          "settings": { "icon": "lock", "title": "Pagos seguros", "text": "Tarjeta, transferencia y meses sin intereses." }
+        },
+        {
+          "type": "benefit",
+          "settings": { "icon": "return", "title": "Cambios fáciles", "text": "30 días para cambiar de opinión." }
+        },
+        {
+          "type": "benefit",
+          "settings": { "icon": "chat", "title": "Atención personalizada", "text": "Te asesoramos por chat o correo." }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "El florero llegó perfectamente empacado y es todavía más bonito en persona. Se nota el cuidado en cada detalle.",
+            "title": "Mariana López",
+            "city": "Ciudad de México",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Compré la lámpara para mi escritorio y cambió por completo mi espacio de trabajo. Envío rapidísimo.",
+            "title": "Andrés Ruiz",
+            "city": "Guadalajara",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Tuve que cambiar una talla y fue facilísimo. La atención es cálida y muy rápida. Ya es mi tienda de regalos.",
+            "title": "Sofía Hernández",
+            "city": "Monterrey",
+            "rating": 5
+          }
+        },
+        { "type": "footer_link", "settings": { "title": "Ayuda", "page": "contact" } },
+        { "type": "footer_link", "settings": { "title": "Envíos", "page": "shipping" } },
+        { "type": "footer_link", "settings": { "title": "Devoluciones", "page": "refund" } },
+        { "type": "footer_link", "settings": { "title": "Aviso de privacidad", "page": "privacy" } },
+        { "type": "footer_link", "settings": { "title": "Términos y condiciones", "page": "terms" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

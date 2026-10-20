@@ -1,0 +1,55 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#F7F6F2">
+    <link rel="canonical" href="{{ canonical_url }}">
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {%- comment -%}
+      Layout mínimo para la landing de Luma: sin el header ni el footer del tema,
+      porque la sección trae los suyos. Carga las fuentes configuradas en el tema
+      cuando usa los ids estándar (Dawn y la mayoría de temas 2.0).
+    {%- endcomment -%}
+    <style>
+      {%- if settings.type_body_font != blank -%}
+        {%- assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold' -%}
+        {{ settings.type_body_font | font_face: font_display: 'swap' }}
+        {{ body_font_bold | font_face: font_display: 'swap' }}
+      {%- endif -%}
+      {%- if settings.type_header_font != blank -%}
+        {{ settings.type_header_font | font_face: font_display: 'swap' }}
+      {%- endif -%}
+      :root {
+        {%- if settings.type_body_font != blank %}
+        --font-body-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+        --font-body-weight: {{ settings.type_body_font.weight }};
+        {%- endif -%}
+        {%- if settings.type_header_font != blank %}
+        --font-heading-family: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
+        --font-heading-weight: {{ settings.type_header_font.weight }};
+        {%- endif %}
+      }
+      html { -webkit-text-size-adjust: 100%; }
+      body { margin: 0; background: #F7F6F2; }
+    </style>
+
+    {{ content_for_header }}
+  </head>
+
+  <body>
+    {{ content_for_layout }}
+  </body>
+</html>
